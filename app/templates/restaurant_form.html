@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="flex-grow flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+  <div class="w-full max-w-xl">
+    
+    <!-- Enlace Volver a la lista -->
+    <div class="mb-4">
+      <a href="/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-sky-700 hover:text-sky-800 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Volver a restaurantes
+      </a>
+    </div>
+
+    <!-- Registration / Edit Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-8 sm:p-10" data-purpose="registration-card">
+      
+      <!-- Header Text inside Card -->
+      <div class="text-center mb-8">
+        <span class="text-[11px] font-bold tracking-widest text-sky-700 uppercase mb-2 inline-block">
+          FriendlyEats
+        </span>
+        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          {{ "Editar restaurante" if restaurant else "Registrar restaurante" }}
+        </h1>
+        <p class="mt-2 text-sm text-slate-500">
+          {{ "Actualiza la información del restaurante." if restaurant else "Agrega un nuevo lugar al catálogo." }}
+        </p>
+      </div>
+
+      <!-- Form Elements -->
+     <!-- Formulario en app/templates/restaurant_form.html -->
+<form id="restaurant-form" data-id="{{ restaurant.id if restaurant else '' }}" class="space-y-4">
+  
+  <!-- Nombre -->
+  <div>
+    <label class="block text-sm font-medium text-slate-700 mb-1">Nombre del restaurante</label>
+    <input type="text" name="name" value="{{ restaurant.name if restaurant else '' }}" required
+           placeholder="Ej. La Abuela" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900">
+  </div>
+
+  <!-- Categoría (Desplegable) -->
+  <div>
+    <label class="block text-sm font-medium text-slate-700 mb-1">Categoría</label>
+    <select name="category" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900">
+      <option value="">Selecciona una categoría</option>
+      <option value="Mexicana" {% if restaurant and restaurant.category == 'Mexicana' %}selected{% endif %}>Mexicana</option>
+      <option value="Pizza" {% if restaurant and restaurant.category == 'Pizza' %}selected{% endif %}>Pizza</option>
+      <option value="Cortes & Grill" {% if restaurant and restaurant.category == 'Cortes & Grill' %}selected{% endif %}>Cortes & Grill</option>
+      <option value="Mariscos" {% if restaurant and restaurant.category == 'Mariscos' %}selected{% endif %}>Mariscos</option>
+      <option value="Tacos" {% if restaurant and restaurant.category == 'Tacos' %}selected{% endif %}>Tacos Árabes</option>
+      <option value="Italiana" {% if restaurant and restaurant.category == 'Italiana' %}selected{% endif %}>Italiana</option>
+      <option value="Pollo" {% if restaurant and restaurant.category == 'Pollo' %}selected{% endif %}>Pollo</option>
+    </select>
+  </div>
+
+  <!-- Ciudad (Desplegable) -->
+  <div>
+    <label class="block text-sm font-medium text-slate-700 mb-1">Ciudad</label>
+    <select name="city" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900">
+      <option value="">Selecciona una ciudad</option>
+      <option value="Puebla" {% if restaurant and restaurant.city == 'Puebla' %}selected{% endif %}>Puebla</option>
+      <option value="CDMX" {% if restaurant and restaurant.city == 'CDMX' %}selected{% endif %}>CDMX</option>
+      <option value="Monterrey" {% if restaurant and restaurant.city == 'Monterrey' %}selected{% endif %}>Monterrey</option>
+      <option value="Guadalajara" {% if restaurant and restaurant.city == 'Guadalajara' %}selected{% endif %}>Guadalajara</option>
+    </select>
+  </div>
+
+  <!-- Precio -->
+  <div>
+    <label class="block text-sm font-medium text-slate-700 mb-1">Rango de precio</label>
+    <select name="price" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900">
+      <option value="1" {% if restaurant and restaurant.price == 1 %}selected{% endif %}>$ - Económico</option>
+      <option value="2" {% if restaurant and restaurant.price == 2 %}selected{% endif %}>$$ - Moderado</option>
+      <option value="3" {% if restaurant and restaurant.price == 3 %}selected{% endif %}>$$$ - Exclusivo</option>
+    </select>
+  </div>
+
+  <!-- URL de foto -->
+  <div>
+    <label class="block text-sm font-medium text-slate-700 mb-1">URL de fotografía</label>
+    <input type="url" name="photoUrl" value="{{ restaurant.photoUrl if restaurant and restaurant.photoUrl else '' }}"
+           placeholder="https://..." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900">
+  </div>
+
+  <button type="submit" class="w-full py-3 bg-sky-700 hover:bg-sky-800 text-white rounded-xl font-semibold transition">
+    {{ 'Guardar cambios' if restaurant else 'Registrar restaurante' }}
+  </button>
+</form>
+
+      <!-- Mensajes de respuesta JS -->
+      <p id="message" class="text-center mt-4 font-semibold text-sm"></p>
+
+    </div>
+  </div>
+</main>
+{% endblock %}

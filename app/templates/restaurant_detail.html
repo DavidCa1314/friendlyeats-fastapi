@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="w-full pt-6 bg-surface min-h-[calc(100vh-4rem)] max-w-7xl mx-auto px-margin">
+  <div class="flex flex-col w-full py-space-md items-center justify-center">
+    <div class="w-full max-w-3xl flex flex-col gap-space-md">
+      
+      <!-- Enlace Volver a Inicio -->
+      <div class="w-full flex items-center justify-start mb-2">
+        <a href="/" class="inline-flex items-center gap-1.5 text-label-lg font-label-lg text-primary hover:text-primary-container transition-colors">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          <span>Volver a restaurantes</span>
+        </a>
+      </div>
+
+      <!-- Tarjeta principal de detalle -->
+      <div class="w-full bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden flex flex-col">
+        
+        <!-- Imagen principal con overlay -->
+        <div class="relative w-full h-80 sm:h-96 overflow-hidden bg-surface-container">
+          {% if restaurant.photoUrl %}
+            <img 
+              class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
+              src="{{ restaurant.photoUrl }}" 
+              alt="{{ restaurant.name }}"
+            >
+          {% else %}
+            <div class="w-full h-full flex items-center justify-center bg-surface-container-high text-on-surface-variant font-headline-md">
+              Sin fotografía
+            </div>
+          {% endif %}
+          <div class="absolute inset-0 bg-gradient-to-t from-on-surface/80 via-transparent to-black/20 pointer-events-none"></div>
+
+          <!-- Badges de Categoría -->
+          <div class="absolute bottom-space-md left-space-lg flex flex-wrap items-center gap-space-xs">
+            <span class="px-space-md py-1 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wide shadow-sm">
+              {{ restaurant.category }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Información del restaurante -->
+        <div class="p-space-lg sm:p-space-xl flex flex-col gap-space-lg">
+          
+          <div class="flex flex-col gap-space-xs">
+            <h1 class="font-display text-display text-on-surface font-extrabold tracking-tight">
+              {{ restaurant.name }}
+            </h1>
+
+            <div class="flex items-center gap-space-xs text-secondary mt-1">
+              <span class="material-symbols-outlined text-error text-[20px]" style="font-variation-settings: 'FILL' 1;">location_on</span>
+              <span class="font-headline-sm text-headline-sm text-on-surface-variant font-medium">{{ restaurant.city }}</span>
+            </div>
+          </div>
+
+          <!-- Métricas: Rango de Precio y Calificación -->
+          <div class="grid grid-cols-1 gap-space-md sm:grid-cols-2">
+            
+            <!-- Rango de precio -->
+            <div class="flex flex-col p-space-md rounded-xl bg-surface-container-low transition-colors hover:bg-surface-container">
+              <span class="font-label-md text-label-md text-secondary uppercase tracking-wider mb-space-xs">
+                Rango de Precio
+              </span>
+              <div class="flex items-baseline gap-space-xs mt-auto">
+                <span class="font-display text-headline-lg text-primary font-extrabold">
+                  {% if restaurant.price == 1 %}${% elif restaurant.price == 2 %}$${% else %}$$${% endif %}
+                </span>
+                <span class="font-body-md text-body-md text-secondary font-medium">
+                  ({% if restaurant.price == 1 %}Económico{% elif restaurant.price == 2 %}Moderado{% else %}Exclusivo{% endif %})
+                </span>
+              </div>
+              <div class="w-full bg-surface-container-highest h-1 rounded-full mt-space-sm overflow-hidden">
+                <div class="bg-primary h-full rounded-full {% if restaurant.price == 1 %}w-1/3{% elif restaurant.price == 2 %}w-2/3{% else %}w-full{% endif %}"></div>
+              </div>
+            </div>
+
+            <!-- Calificación promedio -->
+            <div class="flex flex-col p-space-md rounded-xl bg-surface-container-low transition-colors hover:bg-surface-container">
+  <span class="font-label-md text-label-md text-secondary uppercase tracking-wider mb-space-xs">
+    Calificación Promedio
+  </span>
+  <div class="flex items-center gap-space-xs mt-auto">
+    <span class="material-symbols-outlined text-primary text-[24px]" style="font-variation-settings: 'FILL' 1;">star</span>
+    <span class="font-display text-headline-lg text-on-surface font-extrabold">{{ restaurant.avgRating }}</span>
+    <span class="font-body-sm text-body-sm text-secondary">/ 5.0 ({{ restaurant.numRatings }} reseñas)</span>
+  </div>
+</div>
+
+          </div>
+
+          <!-- Botones de Acción principal -->
+          <div class="pt-space-md flex flex-col sm:flex-row items-center gap-space-md">
+            <a 
+              href="/restaurants/{{ restaurant.id }}/edit" 
+              class="w-full sm:flex-1 inline-flex items-center justify-center gap-space-xs px-space-lg py-space-md rounded-xl bg-primary text-on-primary font-headline-sm text-headline-sm shadow-md hover:bg-primary-container active:scale-[0.98] transition-all cursor-pointer text-center"
+            >
+              <span class="material-symbols-outlined text-[20px]">edit</span>
+              <span>Editar restaurante</span>
+            </a>
+
+            <button 
+              type="button" 
+              onclick="document.getElementById('delete-modal').classList.remove('hidden')" 
+              class="w-full sm:flex-1 inline-flex items-center justify-center gap-space-xs px-space-lg py-space-md rounded-xl bg-error text-on-error font-headline-sm text-headline-sm shadow-md hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer"
+            >
+              <span class="material-symbols-outlined text-[20px]">delete_forever</span>
+              <span>Eliminar restaurante</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal Confirmación de Eliminación -->
+  <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-space-md bg-on-surface/60 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-surface-container-lowest rounded-xl p-space-lg shadow-2xl flex flex-col gap-space-md">
+      <div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+        <span class="material-symbols-outlined text-[26px]">warning</span>
+      </div>
+      <div class="flex flex-col gap-space-xs">
+        <h3 class="font-headline-md text-headline-md text-on-surface font-bold">¿Eliminar {{ restaurant.name }}?</h3>
+        <p class="font-body-md text-body-md text-secondary">
+          Esta acción no se puede deshacer. Se borrará este restaurante de forma permanente de la base de datos.
+        </p>
+      </div>
+      <div class="flex items-center justify-end gap-space-sm pt-space-sm">
+        <button 
+          type="button" 
+          onclick="document.getElementById('delete-modal').classList.add('hidden')" 
+          class="px-space-md py-space-sm rounded-xl font-label-lg text-label-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="button" 
+          onclick="deleteRestaurant('{{ restaurant.id }}')" 
+          class="px-space-md py-space-sm rounded-xl font-label-lg text-label-lg bg-error text-on-error hover:opacity-90 transition-opacity"
+        >
+          Sí, eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

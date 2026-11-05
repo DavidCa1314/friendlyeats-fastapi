@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-[1200px] w-full mx-auto px-margin py-space-lg space-y-space-lg">
+    <!-- Toolbar de Filtros -->
+    <!-- Filtros en app/templates/restaurants.html -->
+<form method="GET" action="/" class="flex flex-wrap items-center gap-3 mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+  
+  <!-- Categoría -->
+  <select name="category" class="rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-700 bg-white">
+    <option value="">Categoría: Todas</option>
+    {% for cat in categories %}
+      <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+    {% endfor %}
+  </select>
+
+  <!-- Ciudad -->
+  <select name="city" class="rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-700 bg-white">
+    <option value="">Ciudad: Todas las ciudades</option>
+    {% for c in cities %}
+      <option value="{{ c }}" {% if selected_city == c %}selected{% endif %}>{{ c }}</option>
+    {% endfor %}
+  </select>
+
+  <!-- Precio -->
+  <select name="price" class="rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-700 bg-white">
+    <option value="">Precio: Cualquier precio</option>
+    <option value="1" {% if selected_price == 1 or selected_price == '1' %}selected{% endif %}>$ Económico</option>
+    <option value="2" {% if selected_price == 2 or selected_price == '2' %}selected{% endif %}>$$ Medio</option>
+    <option value="3" {% if selected_price == 3 or selected_price == '3' %}selected{% endif %}>$$$ Premium</option>
+  </select>
+
+  <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-slate-800 transition">
+    Filtrar
+  </button>
+</form>
+
+    <!-- Grid dinámico conectado con los restaurantes de la BD -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+        {% for restaurant in restaurants %}
+        <article class="restaurant-card group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col">
+            <div class="relative w-full aspect-[16/10] overflow-hidden bg-surface-container">
+                {% if restaurant.photoUrl %}
+                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="{{ restaurant.photoUrl }}" alt="{{ restaurant.name }}">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-surface-container-high text-on-surface-variant font-label-md">Sin foto</div>
+                {% endif %}
+                
+                <div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent"></div>
+                
+                <div class="absolute top-3 left-3 flex items-center gap-1">
+                    <span class="px-2 py-0.5 rounded bg-inverse-surface/85 backdrop-blur-md text-tertiary-fixed font-label-sm text-label-sm uppercase tracking-wide">
+                        {{ restaurant.category }}
+                    </span>
+                </div>
+                
+                <div class="absolute top-3 right-3 flex items-center">
+                    <span class="px-2.5 py-0.5 rounded bg-inverse-surface/90 backdrop-blur-md text-surface-bright font-label-sm text-label-sm font-semibold tracking-wider">
+                        {% if restaurant.price == 1 %}${% elif restaurant.price == 2 %}$${% else %}$$${% endif %}
+                    </span>
+                </div>
+
+                <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-surface-bright">
+                    <div class="flex items-center gap-1 font-label-sm text-label-sm">
+                        <span class="material-symbols-outlined text-amber-400 text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                        <span class="font-bold text-white">{{ restaurant.avgRating }}</span>
+                        <span class="text-surface-dim font-normal">({{ restaurant.numRatings }} reseñas)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-space-md flex flex-col flex-1 justify-between gap-space-md">
+                <div class="space-y-space-xs">
+                    <div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
+                        <span class="material-symbols-outlined text-[16px] text-primary">location_on</span>
+                        <span>{{ restaurant.city }}</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md text-on-surface font-bold group-hover:text-primary transition-colors">
+                        {{ restaurant.name }}
+                    </h3>
+                </div>
+
+                <div class="space-y-space-sm pt-space-xs">
+                    <a class="w-full flex items-center justify-between px-space-md py-2.5 rounded-lg bg-inverse-surface text-inverse-on-surface hover:bg-on-surface transition-colors font-label-md text-label-md group/btn" href="/restaurants/{{ restaurant.id }}">
+                        <span>Ver detalles</span>
+                        <span class="material-symbols-outlined text-[18px] group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+        </article>
+        {% else %}
+        <div class="col-span-full py-16 flex flex-col items-center justify-center text-center bg-surface-container-lowest rounded-xl p-space-xl shadow-sm">
+            <span class="material-symbols-outlined text-[32px] text-on-surface-variant mb-2">restaurant_menu</span>
+            <h3 class="font-headline-md text-headline-md text-on-surface font-bold">No hay restaurantes en la base de datos</h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
